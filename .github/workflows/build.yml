@@ -2,6 +2,7 @@ name: CI
 on:
   push:
     branches: [ main ]
+    tags: [ 'v*' ]
   pull_request:
     branches: [ main ]
   workflow_dispatch:
@@ -44,3 +45,12 @@ jobs:
           branch: gh-pages
           folder: docs
           clean: true
+
+      - name: Release
+        uses: svenstaro/upload-release-action@v2
+        if: contains(github.ref, 'refs/tags/')
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: docs/
+          tag: ${{ github.ref }}
+          overwrite: true
